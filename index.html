@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Velvet Shadow Rechner</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top, #3b050b 0%, #120004 35%, #050505 100%);
+    color: #f5d28a;
+    font-family: "Poppins", sans-serif;
+    text-align: center;
+}
+
+header {
+    padding: 25px 15px 10px;
+}
+
+h1 {
+    font-family: "Orbitron", sans-serif;
+    font-size: 42px;
+    letter-spacing: 4px;
+    color: #d4af37;
+    text-shadow:
+        0 0 8px #d4af37,
+        0 0 20px #8b0000,
+        0 0 45px #ff003c;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: #c9a227;
+    font-size: 14px;
+    letter-spacing: 2px;
+}
+
+.time {
+    margin-top: 12px;
+    color: #fff1c2;
+    font-size: 14px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 25px auto;
+    padding: 0 15px 40px;
+}
+
+.role-select {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.role-btn {
+    border: 1px solid #d4af37;
+    background: rgba(0,0,0,0.45);
+    color: #f5d28a;
+    padding: 12px 20px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.2s;
+}
+
+.role-btn:hover,
+.role-btn.active {
+    background: #8b0000;
+    box-shadow: 0 0 18px #d4af37;
+    transform: translateY(-2px);
+}
+
+.panel {
+    display: none;
+}
+
+.panel.active {
+    display: block;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 18px;
+}
+
+.card {
+    background: rgba(10, 0, 0, 0.72);
+    border: 1px solid rgba(212,175,55,0.65);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 0 20px rgba(139,0,0,0.45);
+}
+
+.card h3 {
+    margin: 0 0 8px;
+    color: #ffd36b;
+}
+
+.price {
+    color: #fff;
+    margin-bottom: 12px;
+}
+
+.counter {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.btn-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+button {
+    border: none;
+    border-radius: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-weight: 700;
+    font-family: "Poppins", sans-serif;
+}
+
+.plus {
+    background: #d4af37;
+    color: #120004;
+}
+
+.minus {
+    background: #5c0b13;
+    color: white;
+}
+
+.reset {
+    background: #111;
+    border: 1px solid #d4af37;
+    color: #d4af37;
+}
+
+.total-box {
+    margin: 25px auto;
+    max-width: 600px;
+    background: rgba(0,0,0,0.75);
+    border: 1px solid #d4af37;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 0 25px rgba(212,175,55,0.25);
+}
+
+.total {
+    font-size: 36px;
+    color: #fff;
+    font-weight: 700;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #d4af37;
+    background: #090909;
+    color: white;
+    margin: 8px 0;
+    font-family: "Poppins", sans-serif;
+}
+
+textarea {
+    height: 220px;
+    resize: none;
+}
+
+.log-btn {
+    background: #d4af37;
+    color: #111;
+    margin-top: 10px;
+}
+
+footer {
+    margin-top: 30px;
+    color: #8f7a3a;
+    font-size: 13px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>VELVET SHADOW</h1>
+    <div class="subtitle">Luxury Nightclub Rechner</div>
+    <div class="time" id="time"></div>
+</header>
+
+<div class="container">
+
+    <div class="role-select">
+        <button class="role-btn active" onclick="showPanel('bar', this)">🍸 Bar</button>
+        <button class="role-btn" onclick="showPanel('dancer', this)">💃 Tänzer/innen</button>
+        <button class="role-btn" onclick="showPanel('security', this)">🛡️ Security</button>
+        <button class="role-btn" onclick="showPanel('leadership', this)">👑 Leadership</button>
+    </div>
+
+    <section id="bar" class="panel active">
+        <div class="grid" id="products"></div>
+
+        <div class="total-box">
+            <h2>Gesamteinnahmen</h2>
+            <div class="total" id="total">0$</div>
+            <button class="log-btn" onclick="generateLog()">Discord Log erstellen</button>
+            <button class="reset" onclick="resetAll()">Alles zurücksetzen</button>
+            <textarea id="logOutput" readonly placeholder="Hier erscheint dein Discord Log..."></textarea>
+        </div>
+    </section>
+
+    <section id="dancer" class="panel">
+        <div class="total-box">
+            <h2>💃 Private Timer</h2>
+            <input id="dancerName" placeholder="Name Tänzer/in">
+            <input id="customerName" placeholder="Name Kunde">
+            <input id="privatePrice" type="number" placeholder="Preis pro Minute $" value="1000">
+            <button class="plus" onclick="startPrivate()">Private starten</button>
+            <button class="minus" onclick="stopPrivate()">Private stoppen</button>
+
+            <h3 id="timer">00:00</h3>
+            <textarea id="privateLog" readonly placeholder="Private Verlauf..."></textarea>
+        </div>
+    </section>
+
+    <section id="security" class="panel">
+        <div class="total-box">
+            <h2>🛡️ Security Log</h2>
+            <input id="personName" placeholder="Name der Person">
+            <input id="reason" placeholder="Grund / Situation">
+            <select id="action">
+                <option>Verwarnung</option>
+                <option>Hausverbot</option>
+                <option>Entfernt vom Gelände</option>
+                <option>Security Einsatz</option>
+            </select>
+            <button class="log-btn" onclick="securityLog()">Security Log erstellen</button>
+            <textarea id="securityOutput" readonly></textarea>
+        </div>
+    </section>
+
+    <section id="leadership" class="panel">
+        <div class="total-box">
+            <h2>👑 Tagesübersicht</h2>
+            <p>Gesamtumsatz Bar:</p>
+            <div class="total" id="leaderTotal">0$</div>
+            <button class="log-btn" onclick="copySummary()">Tagesübersicht erstellen</button>
+            <textarea id="summaryOutput" readonly></textarea>
+        </div>
+    </section>
+
+</div>
+
+<footer>by Mason Milano • Velvet Shadow</footer>
+
+<script>
+const products = [
+    { name: "Velvet Kiss", price: 1200, type: "Getränk" },
+    { name: "Midnight Smoke", price: 1300, type: "Getränk" },
+    { name: "Dark Desire", price: 2400, type: "Getränk" },
+    { name: "Shadow Martini", price: 2800, type: "Getränk" },
+    { name: "Black Flame", price: 3200, type: "Getränk" },
+
+    { name: "Silk Bites", price: 1600, type: "Speise" },
+    { name: "Red Room Burger", price: 2200, type: "Speise" },
+    { name: "Temptation Fries", price: 1200, type: "Speise" },
+    { name: "Velvet Wings", price: 1800, type: "Speise" },
+    { name: "Sweet Sin", price: 1500, type: "Speise" },
+
+    { name: "Shadow Night Menü", price: 6900, type: "Menü" },
+    { name: "VIP Temptation Menü", price: 9800, type: "Menü" }
+];
+
+let counts = {};
+products.forEach(p => counts[p.name] = 0);
+
+function renderProducts() {
+    const box = document.getElementById("products");
+    box.innerHTML = "";
+
+    products.forEach(p => {
+        box.innerHTML += `
+            <div class="card">
+                <h3>${p.name}</h3>
+                <div class="price">${p.type} • ${p.price.toLocaleString("de-DE")}$</div>
+                <div class="counter" id="count-${p.name}">0</div>
+                <div class="btn-row">
+                    <button class="plus" onclick="addItem('${p.name}')">+1</button>
+                    <button class="minus" onclick="removeItem('${p.name}')">-1</button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function addItem(name) {
+    counts[name]++;
+    update();
+}
+
+function removeItem(name) {
+    if (counts[name] > 0) counts[name]--;
+    update();
+}
+
+function update() {
+    let total = 0;
+
+    products.forEach(p => {
+        total += counts[p.name] * p.price;
+        document.getElementById(`count-${p.name}`).innerText = counts[p.name];
+    });
+
+    document.getElementById("total").innerText = total.toLocaleString("de-DE") + "$";
+    document.getElementById("leaderTotal").innerText = total.toLocaleString("de-DE") + "$";
+}
+
+function resetAll() {
+    if (!confirm("Wirklich alles zurücksetzen?")) return;
+    products.forEach(p => counts[p.name] = 0);
+    document.getElementById("logOutput").value = "";
+    update();
+}
+
+function generateLog() {
+    let total = 0;
+    let itemCount = 0;
+    let text = `🖤 **Velvet Shadow Einnahmen-Log** 🖤\n\n`;
+
+    text += `**Ausgaben:**\n`;
+
+    products.forEach(p => {
+        if (counts[p.name] > 0) {
+            text += `• ${counts[p.name]}x ${p.name} - ${(counts[p.name] * p.price).toLocaleString("de-DE")}$\n`;
+            total += counts[p.name] * p.price;
+            itemCount += counts[p.name];
+        }
+    });
+
+    text += `\n**Ausgaben Gesamt:** ${itemCount} Artikel\n`;
+    text += `**Einnahmen:** ${total.toLocaleString("de-DE")}$\n`;
+    text += `**Datum:** ${new Date().toLocaleString("de-DE")}\n`;
+    text += `\n— Velvet Shadow`;
+
+    document.getElementById("logOutput").value = text;
+}
+
+function showPanel(id, btn) {
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll(".role-btn").forEach(b => b.classList.remove("active"));
+
+    document.getElementById(id).classList.add("active");
+    btn.classList.add("active");
+}
+
+function updateTime() {
+    document.getElementById("time").innerText = new Date().toLocaleString("de-DE");
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+let timerInterval = null;
+let startTime = null;
+
+function startPrivate() {
+    if (timerInterval) return;
+
+    startTime = Date.now();
+
+    timerInterval = setInterval(() => {
+        const diff = Date.now() - startTime;
+        const min = Math.floor(diff / 60000);
+        const sec = Math.floor((diff % 60000) / 1000);
+        document.getElementById("timer").innerText =
+            String(min).padStart(2, "0") + ":" + String(sec).padStart(2, "0");
+    }, 1000);
+}
+
+function stopPrivate() {
+    if (!timerInterval) return;
+
+    clearInterval(timerInterval);
+    timerInterval = null;
+
+    const diff = Date.now() - startTime;
+    const minutes = Math.ceil(diff / 60000);
+    const pricePerMinute = Number(document.getElementById("privatePrice").value) || 0;
+    const total = minutes * pricePerMinute;
+
+    const dancer = document.getElementById("dancerName").value || "Unbekannt";
+    const customer = document.getElementById("customerName").value || "Unbekannt";
+
+    const log = `💃 Private beendet
+Tänzer/in: ${dancer}
+Kunde: ${customer}
+Dauer: ${minutes} Minuten
+Preis: ${total.toLocaleString("de-DE")}$
+Zeit: ${new Date().toLocaleString("de-DE")}
+-----------------------------\n`;
+
+    document.getElementById("privateLog").value += log;
+    document.getElementById("timer").innerText = "00:00";
+}
+
+function securityLog() {
+    const name = document.getElementById("personName").value || "Unbekannt";
+    const reason = document.getElementById("reason").value || "Kein Grund angegeben";
+    const action = document.getElementById("action").value;
+
+    const text = `🛡️ **Velvet Shadow Security Log**
+
+Person: ${name}
+Maßnahme: ${action}
+Grund: ${reason}
+Zeitpunkt: ${new Date().toLocaleString("de-DE")}
+
+— Velvet Security`;
+
+    document.getElementById("securityOutput").value = text;
+}
+
+function copySummary() {
+    let total = 0;
+    let itemCount = 0;
+
+    products.forEach(p => {
+        total += counts[p.name] * p.price;
+        itemCount += counts[p.name];
+    });
+
+    const text = `👑 **Velvet Shadow Tagesübersicht**
+
+Gesamte Artikel: ${itemCount}
+Gesamtumsatz Bar: ${total.toLocaleString("de-DE")}$
+
+Datum: ${new Date().toLocaleString("de-DE")}
+
+— Leadership`;
+
+    document.getElementById("summaryOutput").value = text;
+}
+
+renderProducts();
+update();
+</script>
+
+</body>
+</html>
