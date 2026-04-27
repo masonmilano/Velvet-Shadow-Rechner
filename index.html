@@ -29,8 +29,7 @@ body::before {
     content: "";
     position: fixed;
     inset: 0;
-    background:
-        linear-gradient(120deg, transparent, rgba(212,175,55,0.06), transparent);
+    background: linear-gradient(120deg, transparent, rgba(212,175,55,0.06), transparent);
     animation: lightMove 7s infinite linear;
     pointer-events: none;
 }
@@ -180,15 +179,6 @@ button:active,
     overflow: hidden;
 }
 
-.card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 22px;
-    border: 1px solid rgba(255,255,255,0.06);
-    pointer-events: none;
-}
-
 .card:hover {
     transform: scale(1.045);
     background: linear-gradient(145deg, rgba(139,0,0,0.65), rgba(0,0,0,0.86));
@@ -330,11 +320,39 @@ textarea::-webkit-scrollbar-thumb {
     box-shadow: 0 0 34px rgba(255,46,138,0.38);
 }
 
+.blacklist-card {
+    background: rgba(20,0,0,0.72);
+    border: 1px solid rgba(255,0,60,0.5);
+    border-radius: 20px;
+    padding: 18px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 32px rgba(255,0,60,0.2);
+    transition: .18s;
+}
+
+.blacklist-card:hover {
+    transform: scale(1.035);
+    box-shadow: 0 0 38px rgba(255,0,60,0.42);
+}
+
+.blacklist-card.expired {
+    border-color: rgba(120,120,120,0.55);
+    opacity: 0.65;
+}
+
 .timer-big {
     font-size: 34px;
     color: white;
     font-weight: 700;
     text-shadow: 0 0 18px rgba(255,46,138,0.9);
+}
+
+.ban-time {
+    font-size: 27px;
+    color: #fff;
+    font-weight: 700;
+    text-shadow: 0 0 18px rgba(255,0,60,0.9);
+    margin: 12px 0;
 }
 
 footer {
@@ -400,23 +418,20 @@ footer {
     </section>
 
     <section id="security" class="panel">
-        <h2 class="section-title">SECURITY LOG</h2>
+        <h2 class="section-title">BLACKLIST / HAUSVERBOT</h2>
 
         <div class="total-box">
-            <input id="personName" placeholder="Name der Person">
-            <input id="reason" placeholder="Grund / Situation">
-            <select id="action">
-                <option>Verwarnung</option>
-                <option>Hausverbot</option>
-                <option>Entfernt vom Gelände</option>
-                <option>Security Einsatz</option>
-            </select>
+            <h2>🚫 Hausverbot eintragen</h2>
+            <input id="banName" placeholder="Name der Person">
+            <input id="banReason" placeholder="Grund für Hausverbot">
+            <input id="banDays" type="number" placeholder="Dauer in Tagen, z. B. 7">
 
-            <button class="log-btn" onclick="securityLog()">Security Log erstellen</button>
-            <button class="copy-btn" onclick="copyText('securityOutput')">Log kopieren</button>
-            <button class="reset" onclick="clearSecurityLog()">Security Log löschen</button>
-            <textarea id="securityOutput" readonly></textarea>
+            <button class="log-btn" onclick="addBan()">Hausverbot eintragen</button>
+            <button class="copy-btn" onclick="copyBlacklist()">Blacklist kopieren</button>
+            <button class="reset" onclick="clearBlacklist()">Blacklist leeren</button>
         </div>
+
+        <div class="private-list" id="blacklist"></div>
     </section>
 
     <section id="leadership" class="panel">
@@ -460,6 +475,10 @@ products.forEach(p => {
 
 let currentTotal = 0;
 
+function cleanId(text) {
+    return text.replaceAll(" ", "-").replaceAll("/", "-");
+}
+
 function renderProducts() {
     const box = document.getElementById("products");
     box.innerHTML = "";
@@ -477,10 +496,6 @@ function renderProducts() {
             </div>
         `;
     });
-}
-
-function cleanId(text) {
-    return text.replaceAll(" ", "-").replaceAll("/", "-");
 }
 
 function addItem(name) {
@@ -530,7 +545,7 @@ function animateMoney(element, start, end) {
 }
 
 function resetAll() {
-    if (!confirm("Wirklich alles zurücksetzen?")) return;
+    if (!confirm("Wirklich Bar-Kasse zurücksetzen?")) return;
 
     products.forEach(p => counts[p.name] = 0);
 
@@ -584,7 +599,7 @@ function updateTime() {
 setInterval(updateTime, 1000);
 updateTime();
 
-/* PRIVATE TIMER */
+/* TÄNZER/INNEN */
 let activePrivates = JSON.parse(localStorage.getItem("velvet_active_privates")) || [];
 let privateHistory = localStorage.getItem("velvet_private_log") || "";
 
@@ -673,37 +688,126 @@ function clearPrivateHistory() {
 
 setInterval(renderPrivates, 1000);
 
-/* SECURITY */
-function securityLog() {
-    const name = document.getElementById("personName").value || "Unbekannt";
-    const reason = document.getElementById("reason").value || "Kein Grund angegeben";
-    const action = document.getElementById("action").value;
+/* SECURITY BLACKLIST / HAUSVERBOT */
+let blacklist = JSON.parse(localStorage.getItem("velvet_blacklist")) || [];
 
-    const old = localStorage.getItem("velvet_security_log") || "";
+function addBan() {
+    const name = document.getElementById("banName").value || "Unbekannt";
+    const reason = document.getElementById("banReason").value || "Kein Grund angegeben";
+    const days = Number(document.getElementById("banDays").value);
 
-    const text = `🛡️ **Velvet Shadow Security Log**
+    if (!days || days <= 0) {
+        alert("Bitte gültige Dauer in Tagen eingeben.");
+        return;
+    }
 
-Person: ${name}
-Maßnahme: ${action}
-Grund: ${reason}
-Zeitpunkt: ${new Date().toLocaleString("de-DE")}
+    const start = Date.now();
+    const end = start + days * 24 * 60 * 60 * 1000;
 
-— Velvet Security
+    blacklist.push({
+        id: Date.now(),
+        name,
+        reason,
+        start,
+        end,
+        days
+    });
 
------------------------------
+    saveBlacklist();
+    renderBlacklist();
 
-`;
-
-    const fullLog = old + text;
-    document.getElementById("securityOutput").value = fullLog;
-    localStorage.setItem("velvet_security_log", fullLog);
+    document.getElementById("banName").value = "";
+    document.getElementById("banReason").value = "";
+    document.getElementById("banDays").value = "";
 }
 
-function clearSecurityLog() {
-    if (!confirm("Security Log wirklich löschen?")) return;
-    document.getElementById("securityOutput").value = "";
-    localStorage.removeItem("velvet_security_log");
+function saveBlacklist() {
+    localStorage.setItem("velvet_blacklist", JSON.stringify(blacklist));
 }
+
+function formatRemaining(end) {
+    const remaining = end - Date.now();
+
+    if (remaining <= 0) return "Abgelaufen";
+
+    const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((remaining / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((remaining / (1000 * 60)) % 60);
+    const seconds = Math.floor((remaining / 1000) % 60);
+
+    return `${days} Tage, ${hours} Std, ${minutes} Min, ${seconds} Sek`;
+}
+
+function renderBlacklist() {
+    const box = document.getElementById("blacklist");
+    if (!box) return;
+
+    box.innerHTML = "";
+
+    if (blacklist.length === 0) {
+        box.innerHTML = `<div class="blacklist-card">Keine aktiven Hausverbote</div>`;
+        return;
+    }
+
+    blacklist
+        .sort((a, b) => b.start - a.start)
+        .forEach(ban => {
+            const expired = ban.end <= Date.now();
+
+            box.innerHTML += `
+                <div class="blacklist-card ${expired ? "expired" : ""}">
+                    <h3>🚫 ${ban.name}</h3>
+                    <p><b>Status:</b> ${expired ? "Abgelaufen" : "Aktiv"}</p>
+                    <p><b>Grund:</b> ${ban.reason}</p>
+                    <p><b>Dauer:</b> ${ban.days} Tage</p>
+                    <p><b>Start:</b> ${new Date(ban.start).toLocaleString("de-DE")}</p>
+                    <p><b>Ende:</b> ${new Date(ban.end).toLocaleString("de-DE")}</p>
+                    <div class="ban-time">${formatRemaining(ban.end)}</div>
+                    <button class="minus" onclick="removeBan(${ban.id})">
+                        ${expired ? "Eintrag entfernen" : "Hausverbot entfernen"}
+                    </button>
+                </div>
+            `;
+        });
+}
+
+function removeBan(id) {
+    blacklist = blacklist.filter(ban => ban.id !== id);
+    saveBlacklist();
+    renderBlacklist();
+}
+
+function clearBlacklist() {
+    if (!confirm("Wirklich komplette Blacklist löschen?")) return;
+
+    blacklist = [];
+    localStorage.removeItem("velvet_blacklist");
+    renderBlacklist();
+}
+
+function copyBlacklist() {
+    let text = `🚫 **Velvet Shadow Blacklist / Hausverbote** 🚫\n\n`;
+
+    if (blacklist.length === 0) {
+        text += `Keine Hausverbote eingetragen.\n`;
+    } else {
+        blacklist.forEach(ban => {
+            text += `Person: ${ban.name}\n`;
+            text += `Status: ${ban.end <= Date.now() ? "Abgelaufen" : "Aktiv"}\n`;
+            text += `Grund: ${ban.reason}\n`;
+            text += `Dauer: ${ban.days} Tage\n`;
+            text += `Start: ${new Date(ban.start).toLocaleString("de-DE")}\n`;
+            text += `Ende: ${new Date(ban.end).toLocaleString("de-DE")}\n`;
+            text += `Restzeit: ${formatRemaining(ban.end)}\n`;
+            text += `-----------------------------\n`;
+        });
+    }
+
+    navigator.clipboard.writeText(text);
+    alert("Blacklist wurde kopiert.");
+}
+
+setInterval(renderBlacklist, 1000);
 
 /* LEADERSHIP */
 function copySummary() {
@@ -715,12 +819,15 @@ function copySummary() {
         itemCount += counts[p.name];
     });
 
+    const activeBans = blacklist.filter(b => b.end > Date.now()).length;
+
     const text = `👑 **Velvet Shadow Tagesübersicht**
 
 Gesamte Artikel: ${itemCount}
 Gesamtumsatz Bar: ${total.toLocaleString("de-DE")}$
 
 Laufende Privates: ${activePrivates.length}
+Aktive Hausverbote: ${activeBans}
 
 Datum: ${new Date().toLocaleString("de-DE")}
 
@@ -763,7 +870,8 @@ document.addEventListener("click", function(e) {
         e.target.tagName === "BUTTON" ||
         e.target.closest(".card") ||
         e.target.closest(".role-btn") ||
-        e.target.closest(".private-card")
+        e.target.closest(".private-card") ||
+        e.target.closest(".blacklist-card")
     ) {
         playClickSound();
     }
@@ -774,6 +882,7 @@ document.addEventListener("mouseover", function(e) {
         e.target.closest(".card") ||
         e.target.closest(".role-btn") ||
         e.target.closest(".private-card") ||
+        e.target.closest(".blacklist-card") ||
         e.target.tagName === "BUTTON" ||
         e.target.tagName === "INPUT" ||
         e.target.tagName === "TEXTAREA"
@@ -793,9 +902,6 @@ function loadSaved() {
         document.getElementById("privateLog").value = savedPrivate;
     }
 
-    const savedSecurity = localStorage.getItem("velvet_security_log");
-    if (savedSecurity) document.getElementById("securityOutput").value = savedSecurity;
-
     const savedSummary = localStorage.getItem("velvet_summary");
     if (savedSummary) document.getElementById("summaryOutput").value = savedSummary;
 }
@@ -804,6 +910,8 @@ function loadSaved() {
 renderProducts();
 loadSaved();
 renderPrivates();
+renderBlacklist();
+
 currentTotal = calculateTotal();
 document.getElementById("total").innerText = currentTotal.toLocaleString("de-DE") + "$";
 document.getElementById("leaderTotal").innerText = currentTotal.toLocaleString("de-DE") + "$";
