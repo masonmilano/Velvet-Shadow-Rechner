@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Velvet Shadow Rechner</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -16,287 +16,339 @@ body {
     margin: 0;
     min-height: 100vh;
     background:
-        radial-gradient(circle at top, #3b050b 0%, #120004 35%, #050505 100%);
+        radial-gradient(circle at 20% 10%, rgba(212,175,55,0.16), transparent 25%),
+        radial-gradient(circle at 80% 20%, rgba(139,0,0,0.35), transparent 30%),
+        radial-gradient(circle at bottom, #3b050b 0%, #120004 45%, #030303 100%);
     color: #f5d28a;
     font-family: "Poppins", sans-serif;
     text-align: center;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        linear-gradient(120deg, transparent, rgba(212,175,55,0.06), transparent);
+    animation: lightMove 7s infinite linear;
+    pointer-events: none;
+}
+
+@keyframes lightMove {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }
 
 header {
-    padding: 25px 15px 10px;
+    padding: 32px 15px 10px;
 }
 
 h1 {
     font-family: "Orbitron", sans-serif;
-    font-size: 42px;
-    letter-spacing: 4px;
+    font-size: clamp(34px, 5vw, 58px);
+    letter-spacing: 5px;
     color: #d4af37;
-    text-shadow:
-        0 0 8px #d4af37,
-        0 0 20px #8b0000,
-        0 0 45px #ff003c;
-    margin-bottom: 5px;
+    margin: 0;
     animation: glowPulse 2s infinite alternate;
 }
 
+@keyframes glowPulse {
+    from {
+        text-shadow:
+            0 0 10px #d4af37,
+            0 0 25px #8b0000,
+            0 0 45px #ff003c;
+    }
+    to {
+        text-shadow:
+            0 0 20px #ffd36b,
+            0 0 45px #ff4d6d,
+            0 0 75px #ff003c;
+    }
+}
+
 .subtitle {
-    color: #c9a227;
-    font-size: 14px;
-    letter-spacing: 2px;
+    margin-top: 8px;
+    color: #fff1c2;
+    letter-spacing: 3px;
+    font-size: 13px;
+    opacity: 0.85;
 }
 
 .time {
-    margin-top: 12px;
-    color: #fff1c2;
+    margin-top: 14px;
+    color: #d4af37;
     font-size: 14px;
 }
 
 .container {
-    max-width: 1200px;
-    margin: 25px auto;
-    padding: 0 15px 40px;
+    max-width: 1250px;
+    margin: 28px auto;
+    padding: 0 16px 45px;
 }
 
 .role-select {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 25px;
+    gap: 14px;
+    margin-bottom: 28px;
+}
+
+.role-btn,
+button {
+    border: none;
+    border-radius: 14px;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-weight: 700;
+    font-family: "Poppins", sans-serif;
+    transition: transform .18s ease, box-shadow .18s ease, filter .18s ease, background .18s ease;
 }
 
 .role-btn {
-    border: 1px solid #d4af37;
-    background: rgba(0,0,0,0.45);
+    border: 1px solid rgba(212,175,55,0.6);
+    background: rgba(10,0,0,0.55);
     color: #f5d28a;
-    padding: 12px 20px;
-    border-radius: 14px;
-    cursor: pointer;
-    font-weight: 700;
-    transition: 0.2s;
+    backdrop-filter: blur(12px);
 }
 
 .role-btn:hover,
 .role-btn.active {
-    background: #8b0000;
-    box-shadow: 0 0 18px #d4af37;
-    transform: translateY(-2px);
+    transform: scale(1.08);
+    background: linear-gradient(135deg, #8b0000, #1a0004);
+    box-shadow: 0 0 22px rgba(212,175,55,0.65);
+}
+
+button:hover {
+    transform: scale(1.07);
+    box-shadow: 0 0 18px rgba(212,175,55,0.65);
+}
+
+button:active,
+.role-btn:active,
+.card:active {
+    transform: scale(0.96);
 }
 
 .panel {
     display: none;
+    opacity: 0;
+    transform: translateY(12px);
 }
 
 .panel.active {
     display: block;
+    animation: fadeIn .28s ease forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section-title {
+    font-family: "Orbitron", sans-serif;
+    letter-spacing: 2px;
+    color: #ffd36b;
+    margin: 18px 0;
+    text-shadow: 0 0 14px rgba(212,175,55,0.5);
 }
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+    gap: 20px;
 }
 
 .card {
-    background: rgba(20, 0, 0, 0.55); /* transparent */
-    border: 1px solid rgba(212,175,55,0.3);
-    border-radius: 18px;
-    padding: 18px;
-
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-
+    position: relative;
+    background: rgba(20, 0, 0, 0.55);
+    border: 1px solid rgba(212,175,55,0.35);
+    border-radius: 22px;
+    padding: 20px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     box-shadow:
-        0 0 20px rgba(139,0,0,0.45),
-        inset 0 0 10px rgba(255,255,255,0.05);
-
-    transition: 0.2s;
+        0 0 22px rgba(139,0,0,0.45),
+        inset 0 0 12px rgba(255,255,255,0.04);
+    transition: transform .18s ease, box-shadow .18s ease, filter .18s ease, background .18s ease;
+    cursor: pointer;
+    overflow: hidden;
 }
-    .card:hover {
-    transform: scale(1.05);
 
-    background: linear-gradient(
-        145deg,
-        rgba(139,0,0,0.6),
-        rgba(0,0,0,0.8)
-    );
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 22px;
+    border: 1px solid rgba(255,255,255,0.06);
+    pointer-events: none;
+}
 
+.card:hover {
+    transform: scale(1.045);
+    background: linear-gradient(145deg, rgba(139,0,0,0.65), rgba(0,0,0,0.86));
     box-shadow:
-        0 0 25px rgba(212,175,55,0.6),
-        0 0 50px rgba(139,0,0,0.7);
+        0 0 26px rgba(212,175,55,0.65),
+        0 0 55px rgba(139,0,0,0.7);
+    filter: brightness(1.12);
 }
 
 .card h3 {
     margin: 0 0 8px;
     color: #ffd36b;
+    font-size: 21px;
 }
 
 .price {
-    color: #fff;
-    margin-bottom: 12px;
+    color: #fff4cf;
+    font-size: 14px;
+    margin-bottom: 14px;
 }
 
 .counter {
-    font-size: 28px;
+    font-size: 36px;
     font-weight: 700;
-    color: #ffffff;
+    color: white;
+    text-shadow: 0 0 15px rgba(212,175,55,0.6);
 }
 
 .btn-row {
     display: flex;
-    gap: 10px;
     justify-content: center;
-    margin-top: 12px;
-}
-
-button {
-    border: none;
-    border-radius: 12px;
-    padding: 10px 14px;
-    cursor: pointer;
-    font-weight: 700;
-    font-family: "Poppins", sans-serif;
+    gap: 10px;
+    margin-top: 14px;
 }
 
 .plus {
-    background: #d4af37;
+    background: linear-gradient(135deg, #d4af37, #ffd36b);
     color: #120004;
 }
 
 .minus {
-    background: #5c0b13;
+    background: linear-gradient(135deg, #5c0b13, #8b0000);
     color: white;
 }
 
 .reset {
-    background: #111;
+    background: #0c0c0c;
     border: 1px solid #d4af37;
     color: #d4af37;
 }
 
+.log-btn {
+    background: linear-gradient(135deg, #d4af37, #f6cf63);
+    color: #111;
+    margin: 8px 5px;
+}
+
+.copy-btn {
+    background: linear-gradient(135deg, #6a040f, #8b0000);
+    color: white;
+    margin: 8px 5px;
+}
+
 .total-box {
-    margin: 25px auto;
-    max-width: 600px;
-    background: rgba(0,0,0,0.75);
-    border: 1px solid #d4af37;
-    border-radius: 18px;
-    padding: 20px;
-    box-shadow: 0 0 25px rgba(212,175,55,0.25);
+    margin: 28px auto;
+    max-width: 720px;
+    background: rgba(0,0,0,0.62);
+    border: 1px solid rgba(212,175,55,0.55);
+    border-radius: 24px;
+    padding: 24px;
+    backdrop-filter: blur(15px);
+    box-shadow:
+        0 0 25px rgba(212,175,55,0.22),
+        0 0 60px rgba(139,0,0,0.35);
 }
 
 .total {
-    font-size: 36px;
+    font-size: 42px;
     color: #fff;
     font-weight: 700;
+    text-shadow:
+        0 0 15px rgba(212,175,55,0.8),
+        0 0 30px rgba(139,0,0,0.9);
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
     width: 100%;
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid #d4af37;
-    background: #090909;
+    padding: 13px;
+    border-radius: 14px;
+    border: 1px solid rgba(212,175,55,0.6);
+    background: rgba(5,5,5,0.85);
     color: white;
-    margin: 8px 0;
+    margin: 9px 0;
     font-family: "Poppins", sans-serif;
+    outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    box-shadow: 0 0 18px rgba(212,175,55,0.45);
 }
 
 textarea {
-    height: 220px;
+    height: 230px;
     resize: none;
 }
 
-.log-btn {
+textarea::-webkit-scrollbar {
+    width: 8px;
+}
+
+textarea::-webkit-scrollbar-thumb {
     background: #d4af37;
-    color: #111;
-    margin-top: 10px;
+    border-radius: 10px;
+}
+
+.private-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.private-card {
+    background: rgba(30,0,15,0.62);
+    border: 1px solid rgba(255,46,138,0.45);
+    border-radius: 20px;
+    padding: 18px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255,46,138,0.18);
+    transition: .18s;
+}
+
+.private-card:hover {
+    transform: scale(1.035);
+    box-shadow: 0 0 34px rgba(255,46,138,0.38);
+}
+
+.timer-big {
+    font-size: 34px;
+    color: white;
+    font-weight: 700;
+    text-shadow: 0 0 18px rgba(255,46,138,0.9);
 }
 
 footer {
-    margin-top: 30px;
-    color: #8f7a3a;
+    margin-top: 32px;
+    color: #9d8540;
     font-size: 13px;
-}
-    .card,
-.role-btn,
-button {
-    transition: 
-        transform 0.18s ease,
-        box-shadow 0.18s ease,
-        filter 0.18s ease;
-}
-
-.card:hover {
-    transform: scale(1.04);
-    box-shadow:
-        0 0 18px rgba(212,175,55,0.55),
-        0 0 35px rgba(139,0,0,0.75);
-    filter: brightness(1.12);
-}
-
-.role-btn:hover {
-    transform: scale(1.08);
-}
-
-button:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 15px rgba(212,175,55,0.65);
-}
-
-button:active,
-.card:active,
-.role-btn:active {
-    transform: scale(0.96);
-}
-
-.plus:hover {
-    background: #ffd76b;
-}
-
-.minus:hover {
-    background: #8b0000;
-}
-
-.reset:hover {
-    background: #1c1c1c;
-    color: #fff1b8;
-}
-
-.card {
-    cursor: pointer;
-}
-
-.card h3 {
-    font-size: 22px;
-}
-
-.price {
-    font-size: 15px;
-}
-
-.counter {
-    font-size: 34px;
-}
-    @keyframes glowPulse {
-    from {
-        text-shadow: 
-            0 0 10px #d4af37,
-            0 0 20px #8b0000,
-            0 0 40px #ff003c;
-    }
-    to {
-        text-shadow: 
-            0 0 20px #ffd36b,
-            0 0 40px #ff4d6d,
-            0 0 70px #ff003c;
-    }
 }
 </style>
 </head>
 
 <body>
-    <audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
-<audio id="hoverSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
+
+<audio id="clickSound" preload="auto" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
+<audio id="hoverSound" preload="auto" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
 
 <header>
     <h1>VELVET SHADOW</h1>
@@ -314,34 +366,43 @@ button:active,
     </div>
 
     <section id="bar" class="panel active">
+        <h2 class="section-title">BAR KASSE</h2>
         <div class="grid" id="products"></div>
 
         <div class="total-box">
             <h2>Gesamteinnahmen</h2>
             <div class="total" id="total">0$</div>
             <button class="log-btn" onclick="generateLog()">Discord Log erstellen</button>
+            <button class="copy-btn" onclick="copyText('logOutput')">Log kopieren</button>
             <button class="reset" onclick="resetAll()">Alles zurücksetzen</button>
             <textarea id="logOutput" readonly placeholder="Hier erscheint dein Discord Log..."></textarea>
         </div>
     </section>
 
     <section id="dancer" class="panel">
+        <h2 class="section-title">TÄNZER/INNEN BEREICH</h2>
+
         <div class="total-box">
-            <h2>💃 Private Timer</h2>
+            <h2>💃 Private Verwaltung</h2>
             <input id="dancerName" placeholder="Name Tänzer/in">
             <input id="customerName" placeholder="Name Kunde">
-            <input id="privatePrice" type="number" placeholder="Preis pro Minute $" value="1000">
             <button class="plus" onclick="startPrivate()">Private starten</button>
-            <button class="minus" onclick="stopPrivate()">Private stoppen</button>
+            <button class="reset" onclick="clearPrivateHistory()">Private Verlauf löschen</button>
+        </div>
 
-            <h3 id="timer">00:00</h3>
-            <textarea id="privateLog" readonly placeholder="Private Verlauf..."></textarea>
+        <div class="private-list" id="privateList"></div>
+
+        <div class="total-box">
+            <h2>Private Verlauf</h2>
+            <button class="copy-btn" onclick="copyText('privateLog')">Verlauf kopieren</button>
+            <textarea id="privateLog" readonly placeholder="Hier erscheint der Private Verlauf..."></textarea>
         </div>
     </section>
 
     <section id="security" class="panel">
+        <h2 class="section-title">SECURITY LOG</h2>
+
         <div class="total-box">
-            <h2>🛡️ Security Log</h2>
             <input id="personName" placeholder="Name der Person">
             <input id="reason" placeholder="Grund / Situation">
             <select id="action">
@@ -350,17 +411,22 @@ button:active,
                 <option>Entfernt vom Gelände</option>
                 <option>Security Einsatz</option>
             </select>
+
             <button class="log-btn" onclick="securityLog()">Security Log erstellen</button>
+            <button class="copy-btn" onclick="copyText('securityOutput')">Log kopieren</button>
+            <button class="reset" onclick="clearSecurityLog()">Security Log löschen</button>
             <textarea id="securityOutput" readonly></textarea>
         </div>
     </section>
 
     <section id="leadership" class="panel">
+        <h2 class="section-title">LEADERSHIP ÜBERSICHT</h2>
+
         <div class="total-box">
-            <h2>👑 Tagesübersicht</h2>
             <p>Gesamtumsatz Bar:</p>
             <div class="total" id="leaderTotal">0$</div>
             <button class="log-btn" onclick="copySummary()">Tagesübersicht erstellen</button>
+            <button class="copy-btn" onclick="copyText('summaryOutput')">Übersicht kopieren</button>
             <textarea id="summaryOutput" readonly></textarea>
         </div>
     </section>
@@ -387,8 +453,12 @@ const products = [
     { name: "VIP Temptation Menü", price: 9800, type: "Menü" }
 ];
 
-let counts = {};
-products.forEach(p => counts[p.name] = 0);
+let counts = JSON.parse(localStorage.getItem("velvet_counts")) || {};
+products.forEach(p => {
+    if (counts[p.name] === undefined) counts[p.name] = 0;
+});
+
+let currentTotal = 0;
 
 function renderProducts() {
     const box = document.getElementById("products");
@@ -399,7 +469,7 @@ function renderProducts() {
             <div class="card">
                 <h3>${p.name}</h3>
                 <div class="price">${p.type} • ${p.price.toLocaleString("de-DE")}$</div>
-                <div class="counter" id="count-${p.name}">0</div>
+                <div class="counter" id="count-${cleanId(p.name)}">0</div>
                 <div class="btn-row">
                     <button class="plus" onclick="addItem('${p.name}')">+1</button>
                     <button class="minus" onclick="removeItem('${p.name}')">-1</button>
@@ -407,6 +477,10 @@ function renderProducts() {
             </div>
         `;
     });
+}
+
+function cleanId(text) {
+    return text.replaceAll(" ", "-").replaceAll("/", "-");
 }
 
 function addItem(name) {
@@ -419,21 +493,50 @@ function removeItem(name) {
     update();
 }
 
-function update() {
+function calculateTotal() {
     let total = 0;
+    products.forEach(p => total += counts[p.name] * p.price);
+    return total;
+}
+
+function update() {
+    let total = calculateTotal();
 
     products.forEach(p => {
-        total += counts[p.name] * p.price;
-        document.getElementById(`count-${p.name}`).innerText = counts[p.name];
+        const el = document.getElementById(`count-${cleanId(p.name)}`);
+        if (el) el.innerText = counts[p.name];
     });
 
-    document.getElementById("total").innerText = total.toLocaleString("de-DE") + "$";
-    document.getElementById("leaderTotal").innerText = total.toLocaleString("de-DE") + "$";
+    animateMoney(document.getElementById("total"), currentTotal, total);
+    animateMoney(document.getElementById("leaderTotal"), currentTotal, total);
+
+    currentTotal = total;
+    localStorage.setItem("velvet_counts", JSON.stringify(counts));
+}
+
+function animateMoney(element, start, end) {
+    const duration = 280;
+    const startTime = performance.now();
+
+    function step(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const value = Math.floor(start + (end - start) * progress);
+        element.innerText = value.toLocaleString("de-DE") + "$";
+
+        if (progress < 1) requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
 }
 
 function resetAll() {
     if (!confirm("Wirklich alles zurücksetzen?")) return;
+
     products.forEach(p => counts[p.name] = 0);
+
+    localStorage.removeItem("velvet_counts");
+    localStorage.removeItem("velvet_log");
+
     document.getElementById("logOutput").value = "";
     update();
 }
@@ -453,12 +556,15 @@ function generateLog() {
         }
     });
 
+    if (itemCount === 0) text += `• Keine Artikel eingetragen\n`;
+
     text += `\n**Ausgaben Gesamt:** ${itemCount} Artikel\n`;
     text += `**Einnahmen:** ${total.toLocaleString("de-DE")}$\n`;
     text += `**Datum:** ${new Date().toLocaleString("de-DE")}\n`;
     text += `\n— Velvet Shadow`;
 
     document.getElementById("logOutput").value = text;
+    localStorage.setItem("velvet_log", text);
 }
 
 function showPanel(id, btn) {
@@ -467,61 +573,113 @@ function showPanel(id, btn) {
 
     document.getElementById(id).classList.add("active");
     btn.classList.add("active");
+
+    localStorage.setItem("velvet_active_panel", id);
 }
 
 function updateTime() {
     document.getElementById("time").innerText = new Date().toLocaleString("de-DE");
 }
+
 setInterval(updateTime, 1000);
 updateTime();
 
-let timerInterval = null;
-let startTime = null;
+/* PRIVATE TIMER */
+let activePrivates = JSON.parse(localStorage.getItem("velvet_active_privates")) || [];
+let privateHistory = localStorage.getItem("velvet_private_log") || "";
 
 function startPrivate() {
-    if (timerInterval) return;
-
-    startTime = Date.now();
-
-    timerInterval = setInterval(() => {
-        const diff = Date.now() - startTime;
-        const min = Math.floor(diff / 60000);
-        const sec = Math.floor((diff % 60000) / 1000);
-        document.getElementById("timer").innerText =
-            String(min).padStart(2, "0") + ":" + String(sec).padStart(2, "0");
-    }, 1000);
-}
-
-function stopPrivate() {
-    if (!timerInterval) return;
-
-    clearInterval(timerInterval);
-    timerInterval = null;
-
-    const diff = Date.now() - startTime;
-    const minutes = Math.ceil(diff / 60000);
-    const pricePerMinute = Number(document.getElementById("privatePrice").value) || 0;
-    const total = minutes * pricePerMinute;
-
     const dancer = document.getElementById("dancerName").value || "Unbekannt";
     const customer = document.getElementById("customerName").value || "Unbekannt";
 
-    const log = `💃 Private beendet
-Tänzer/in: ${dancer}
-Kunde: ${customer}
-Dauer: ${minutes} Minuten
-Preis: ${total.toLocaleString("de-DE")}$
-Zeit: ${new Date().toLocaleString("de-DE")}
------------------------------\n`;
+    const privateObj = {
+        id: Date.now(),
+        dancer,
+        customer,
+        start: Date.now()
+    };
 
-    document.getElementById("privateLog").value += log;
-    document.getElementById("timer").innerText = "00:00";
+    activePrivates.push(privateObj);
+    savePrivates();
+    renderPrivates();
+
+    document.getElementById("dancerName").value = "";
+    document.getElementById("customerName").value = "";
 }
 
+function stopPrivate(id) {
+    const privateObj = activePrivates.find(p => p.id === id);
+    if (!privateObj) return;
+
+    const diff = Date.now() - privateObj.start;
+    const minutes = Math.floor(diff / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+
+    const log = `💃 **Private beendet**
+Tänzer/in: ${privateObj.dancer}
+Kunde: ${privateObj.customer}
+Dauer: ${minutes}m ${seconds}s
+Start: ${new Date(privateObj.start).toLocaleString("de-DE")}
+Ende: ${new Date().toLocaleString("de-DE")}
+-----------------------------\n`;
+
+    privateHistory += log;
+    document.getElementById("privateLog").value = privateHistory;
+
+    activePrivates = activePrivates.filter(p => p.id !== id);
+    savePrivates();
+    renderPrivates();
+}
+
+function renderPrivates() {
+    const list = document.getElementById("privateList");
+    list.innerHTML = "";
+
+    if (activePrivates.length === 0) {
+        list.innerHTML = `<div class="private-card">Keine laufenden Privates</div>`;
+        return;
+    }
+
+    activePrivates.forEach(p => {
+        const diff = Date.now() - p.start;
+        const min = Math.floor(diff / 60000);
+        const sec = Math.floor((diff % 60000) / 1000);
+
+        list.innerHTML += `
+            <div class="private-card">
+                <h3>💃 ${p.dancer}</h3>
+                <p>Kunde: ${p.customer}</p>
+                <div class="timer-big">${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}</div>
+                <button class="minus" onclick="stopPrivate(${p.id})">Private stoppen</button>
+            </div>
+        `;
+    });
+}
+
+function savePrivates() {
+    localStorage.setItem("velvet_active_privates", JSON.stringify(activePrivates));
+    localStorage.setItem("velvet_private_log", privateHistory);
+}
+
+function clearPrivateHistory() {
+    if (!confirm("Private Verlauf wirklich löschen?")) return;
+    privateHistory = "";
+    activePrivates = [];
+    localStorage.removeItem("velvet_private_log");
+    localStorage.removeItem("velvet_active_privates");
+    document.getElementById("privateLog").value = "";
+    renderPrivates();
+}
+
+setInterval(renderPrivates, 1000);
+
+/* SECURITY */
 function securityLog() {
     const name = document.getElementById("personName").value || "Unbekannt";
     const reason = document.getElementById("reason").value || "Kein Grund angegeben";
     const action = document.getElementById("action").value;
+
+    const old = localStorage.getItem("velvet_security_log") || "";
 
     const text = `🛡️ **Velvet Shadow Security Log**
 
@@ -530,11 +688,24 @@ Maßnahme: ${action}
 Grund: ${reason}
 Zeitpunkt: ${new Date().toLocaleString("de-DE")}
 
-— Velvet Security`;
+— Velvet Security
 
-    document.getElementById("securityOutput").value = text;
+-----------------------------
+
+`;
+
+    const fullLog = old + text;
+    document.getElementById("securityOutput").value = fullLog;
+    localStorage.setItem("velvet_security_log", fullLog);
 }
 
+function clearSecurityLog() {
+    if (!confirm("Security Log wirklich löschen?")) return;
+    document.getElementById("securityOutput").value = "";
+    localStorage.removeItem("velvet_security_log");
+}
+
+/* LEADERSHIP */
 function copySummary() {
     let total = 0;
     let itemCount = 0;
@@ -549,12 +720,24 @@ function copySummary() {
 Gesamte Artikel: ${itemCount}
 Gesamtumsatz Bar: ${total.toLocaleString("de-DE")}$
 
+Laufende Privates: ${activePrivates.length}
+
 Datum: ${new Date().toLocaleString("de-DE")}
 
 — Leadership`;
 
     document.getElementById("summaryOutput").value = text;
+    localStorage.setItem("velvet_summary", text);
 }
+
+/* COPY */
+function copyText(id) {
+    const el = document.getElementById(id);
+    el.select();
+    document.execCommand("copy");
+}
+
+/* SOUNDS */
 function playClickSound() {
     const sound = document.getElementById("clickSound");
     sound.currentTime = 0;
@@ -562,10 +745,16 @@ function playClickSound() {
     sound.play().catch(() => {});
 }
 
+let lastHover = 0;
+
 function playHoverSound() {
+    const now = Date.now();
+    if (now - lastHover < 140) return;
+    lastHover = now;
+
     const sound = document.getElementById("hoverSound");
     sound.currentTime = 0;
-    sound.volume = 0.12;
+    sound.volume = 0.11;
     sound.play().catch(() => {});
 }
 
@@ -573,7 +762,8 @@ document.addEventListener("click", function(e) {
     if (
         e.target.tagName === "BUTTON" ||
         e.target.closest(".card") ||
-        e.target.closest(".role-btn")
+        e.target.closest(".role-btn") ||
+        e.target.closest(".private-card")
     ) {
         playClickSound();
     }
@@ -583,12 +773,40 @@ document.addEventListener("mouseover", function(e) {
     if (
         e.target.closest(".card") ||
         e.target.closest(".role-btn") ||
-        e.target.tagName === "BUTTON"
+        e.target.closest(".private-card") ||
+        e.target.tagName === "BUTTON" ||
+        e.target.tagName === "INPUT" ||
+        e.target.tagName === "TEXTAREA"
     ) {
         playHoverSound();
     }
 });
+
+/* LOAD SAVED DATA */
+function loadSaved() {
+    const savedLog = localStorage.getItem("velvet_log");
+    if (savedLog) document.getElementById("logOutput").value = savedLog;
+
+    const savedPrivate = localStorage.getItem("velvet_private_log");
+    if (savedPrivate) {
+        privateHistory = savedPrivate;
+        document.getElementById("privateLog").value = savedPrivate;
+    }
+
+    const savedSecurity = localStorage.getItem("velvet_security_log");
+    if (savedSecurity) document.getElementById("securityOutput").value = savedSecurity;
+
+    const savedSummary = localStorage.getItem("velvet_summary");
+    if (savedSummary) document.getElementById("summaryOutput").value = savedSummary;
+}
+
+/* INIT */
 renderProducts();
+loadSaved();
+renderPrivates();
+currentTotal = calculateTotal();
+document.getElementById("total").innerText = currentTotal.toLocaleString("de-DE") + "$";
+document.getElementById("leaderTotal").innerText = currentTotal.toLocaleString("de-DE") + "$";
 update();
 </script>
 
