@@ -195,10 +195,72 @@ footer {
     color: #8f7a3a;
     font-size: 13px;
 }
+    .card,
+.role-btn,
+button {
+    transition: 
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        filter 0.18s ease;
+}
+
+.card:hover {
+    transform: scale(1.04);
+    box-shadow:
+        0 0 18px rgba(212,175,55,0.55),
+        0 0 35px rgba(139,0,0,0.75);
+    filter: brightness(1.12);
+}
+
+.role-btn:hover {
+    transform: scale(1.08);
+}
+
+button:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 15px rgba(212,175,55,0.65);
+}
+
+button:active,
+.card:active,
+.role-btn:active {
+    transform: scale(0.96);
+}
+
+.plus:hover {
+    background: #ffd76b;
+}
+
+.minus:hover {
+    background: #8b0000;
+}
+
+.reset:hover {
+    background: #1c1c1c;
+    color: #fff1b8;
+}
+
+.card {
+    cursor: pointer;
+}
+
+.card h3 {
+    font-size: 22px;
+}
+
+.price {
+    font-size: 15px;
+}
+
+.counter {
+    font-size: 34px;
+}
 </style>
 </head>
 
 <body>
+    <audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
+<audio id="hoverSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
 
 <header>
     <h1>VELVET SHADOW</h1>
@@ -457,7 +519,39 @@ Datum: ${new Date().toLocaleString("de-DE")}
 
     document.getElementById("summaryOutput").value = text;
 }
+function playClickSound() {
+    const sound = document.getElementById("clickSound");
+    sound.currentTime = 0;
+    sound.volume = 0.35;
+    sound.play().catch(() => {});
+}
 
+function playHoverSound() {
+    const sound = document.getElementById("hoverSound");
+    sound.currentTime = 0;
+    sound.volume = 0.12;
+    sound.play().catch(() => {});
+}
+
+document.addEventListener("click", function(e) {
+    if (
+        e.target.tagName === "BUTTON" ||
+        e.target.closest(".card") ||
+        e.target.closest(".role-btn")
+    ) {
+        playClickSound();
+    }
+});
+
+document.addEventListener("mouseover", function(e) {
+    if (
+        e.target.closest(".card") ||
+        e.target.closest(".role-btn") ||
+        e.target.tagName === "BUTTON"
+    ) {
+        playHoverSound();
+    }
+});
 renderProducts();
 update();
 </script>
